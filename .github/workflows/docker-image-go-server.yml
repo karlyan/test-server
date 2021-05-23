@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build go-server/. --file Dockerfile --tag go-server:$(date +%s)
+      run: docker build go-server/. --file go-server/Dockerfile --tag go-server:$(date +%s)
