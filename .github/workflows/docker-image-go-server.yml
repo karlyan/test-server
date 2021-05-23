@@ -15,4 +15,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build go-server/. --file go-server/Dockerfile --tag go-server:$(date +%s)
+      run: docker build go-server/. --file go-server/Dockerfile --tag karlyan/go-server:latest
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Push to Docker Hub
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: karlyan/go-server:latest
