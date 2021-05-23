@@ -1,0 +1,29 @@
+name: go-server-tools CI
+
+on:
+  push:
+    paths:
+      - 'go-server/*'
+      - 'go-server-tools/*'
+  pull_request:
+    paths:
+      - 'go-server/*'
+      - 'go-server-tools/*'
+jobs:
+  docker-go:
+    name: build and push go-server
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and Push to Docker Hub
+      uses: docker/build-push-action@v2
+      with:
+        context: ./go-server/
+        file: ./go-server/Dockerfile
+        push: true
+        tags: karlyan/go-server-tools:latest
