@@ -1,7 +1,7 @@
 # Build image
 FROM golang:1.16-alpine AS build
 WORKDIR /app
-COPY go.mod go.sum .
+COPY go.mod go.sum /app/
 RUN go mod download
 COPY . .
 RUN go mod download
