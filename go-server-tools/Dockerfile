@@ -49,6 +49,7 @@ ENV PATH "$PATH:/root/.local/bin"
 
 # base packages
 RUN apk add --no-cache --upgrade \
+        bash \
         coreutils \
         build-base \
         gettext \
