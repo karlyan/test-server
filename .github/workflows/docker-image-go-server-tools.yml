@@ -3,12 +3,17 @@ name: go-server-tools CI
 on:
   push:
     paths:
-      - 'go-server/*'
       - 'go-server-tools/*'
   pull_request:
     paths:
-      - 'go-server/*'
       - 'go-server-tools/*'
+  workflow_run:
+    workflows: ["go-server CI"]
+    branches: [main]
+    types: 
+      - completed
+      - requested
+
 jobs:
   docker-go:
     name: build and push go-server
