@@ -23,7 +23,7 @@ jobs:
     - name: Build and Push to Docker Hub
       uses: docker/build-push-action@v2
       with:
-        context: ./go-server/
-        file: ./go-server/Dockerfile
+        context: ./go-server-tools/
+        file: ./go-server-tools/Dockerfile
         push: true
         tags: karlyan/go-server-tools:latest
