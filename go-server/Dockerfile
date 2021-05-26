@@ -10,5 +10,5 @@ RUN go build -o ./out/app .
 # Runtime image
 FROM alpine:3.13
 COPY --from=build /app/out/app /usr/local/bin/app
-EXPOSE 8080
+EXPOSE 443
 CMD ["/usr/local/bin/app"]
