@@ -1,4 +1,4 @@
-name: go-server CI
+name: k8s-tools CI
 
 on:
   push:
