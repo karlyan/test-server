@@ -23,14 +23,13 @@ RUN echo "HELM_VERSION=${HELM_VERSION}" && \
     helm version && \
     rm -rf ./helm-${HELM_VERSION}-linux-amd64.tar.gz ./linux-amd64
 
-# helm 3.6.3
-RUN echo "HELM_VERSION=${HELM_VERSION}" && \
-    HELM_VERSION="${HELM_VERSION:-v3.6.3}" && \
-    curl -sO https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
-    tar xf ./helm-${HELM_VERSION}-linux-amd64.tar.gz && \
-    mv -f ./linux-amd64/helm /usr/local/bin/helm-${HELM_VERSION} && \
-    helm-${HELM_VERSION} version && \
-    rm -rf ./helm-${HELM_VERSION}-linux-amd64.tar.gz ./linux-amd64
+# helm 3 old version for ECR helm-v3.6.3
+RUN HELM36_VERSION="v3.6.3" && \
+    curl -sO https://get.helm.sh/helm-${HELM36_VERSION}-linux-amd64.tar.gz && \
+    tar xf ./helm-${HELM36_VERSION}-linux-amd64.tar.gz && \
+    mv -f ./linux-amd64/helm /usr/local/bin/helm-${HELM36_VERSION} && \
+    helm-${HELM36_VERSION} version && \
+    rm -rf ./helm-${HELM36_VERSION}-linux-amd64.tar.gz ./linux-amd64
 
 # helmfile
 RUN echo "HELMFILE_VERSION=${HELMFILE_VERSION}" && \
