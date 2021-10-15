@@ -1,0 +1,28 @@
+name: go-server CI
+
+on:
+  push:
+    paths:
+      - 'k8s-tools/*'
+  pull_request:
+    paths:
+      - 'k8s-tools/*'
+
+jobs:
+  docker-go:
+    name: build and push k8s-tools
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and Push to Docker Hub
+      uses: docker/build-push-action@v2
+      with:
+        context: ./k8s-tools/
+        file: ./k8s-tools/Dockerfile
+        push: true
+        tags: karlyan/k8s-tools:latest
