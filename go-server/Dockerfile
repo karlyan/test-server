@@ -1,14 +1,14 @@
 # Build image
-FROM golang:1.16-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.22-alpine AS build
 WORKDIR /app
 COPY go.mod go.sum /app/
 RUN go mod download
 COPY . .
-RUN go mod download
-RUN go build -o ./out/app .
+ARG TARGETOS TARGETARCH
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o ./out/app .
 
 # Runtime image
-FROM alpine:3.13
+FROM alpine:3.20
 COPY --from=build /app/out/app /usr/local/bin/app
 EXPOSE 443
 CMD ["/usr/local/bin/app"]
