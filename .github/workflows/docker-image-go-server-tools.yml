@@ -1,18 +1,12 @@
 name: go-server-tools CI
 
 on:
-  push:
-    paths:
-      - 'go-server-tools/*'
-  pull_request:
-    paths:
-      - 'go-server-tools/*'
-  workflow_run:
-    workflows: ["go-server CI"]
-    branches: [main]
-    types: 
-      - completed
-      - requested
+  workflow_dispatch:
+    inputs:
+      tagName:
+        description: 'The pushed image tag name'
+        required: true
+        default: 'latest'
 
 jobs:
   docker-go:
@@ -36,4 +30,4 @@ jobs:
         context: ./go-server-tools/
         file: ./go-server-tools/Dockerfile
         push: true
-        tags: karlyan/go-server-tools:latest
+        tags: karlyan/go-server-tools:${{ github.event.inputs.tagName }}

@@ -1,14 +1,13 @@
 name: python-server CI
 
 on:
-  push:
-#    branches: [ main ]
-    paths:
-      - 'python-server/*'
-  pull_request:
-#    branches: [ main ]
-    paths:
-      - 'python-server/*'
+  workflow_dispatch:
+    inputs:
+      tagName:
+        description: 'The pushed image tag name'
+        required: true
+        default: 'latest'
+
 jobs:
   docker-go:
     name: build and push go-server
@@ -31,4 +30,4 @@ jobs:
         context: ./python-server/
         file: ./python-server/Dockerfile
         push: true
-        tags: karlyan/python-server:latest
+        tags: karlyan/python-server:${{ github.event.inputs.tagName }}
