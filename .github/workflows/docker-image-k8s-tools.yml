@@ -1,12 +1,12 @@
 name: k8s-tools CI
 
 on:
-  push:
-    paths:
-      - 'k8s-tools/*'
-  pull_request:
-    paths:
-      - 'k8s-tools/*'
+  workflow_dispatch:
+    inputs:
+      tagName:
+        description: 'The pushed image tag name'
+        required: true
+        default: 'latest'
 
 jobs:
   docker-go:
@@ -30,4 +30,4 @@ jobs:
         context: ./k8s-tools/
         file: ./k8s-tools/Dockerfile
         push: true
-        tags: karlyan/k8s-tools:latest
+        tags: karlyan/k8s-tools:${{ github.event.inputs.tagName }}
