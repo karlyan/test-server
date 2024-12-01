@@ -1,15 +1,33 @@
+{{- if .Values.service.enabled  -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "generic-chart.fullname" . }}
+  name: {{ .Values.service.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  namespace: {{ .Release.Namespace }}
+  {{- if or .Values.service.annotations .Values.additionalAnnotations }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.service.labels }}
   labels:
-    {{- include "generic-chart.labels" . | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
+  {{- $ports := include "service.servicePortsConfig" . }}
+  {{- if $ports }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+    {{- $ports | nindent 4}}
+  {{- end }}
+  {{- if .Values.service.selector }}
+  {{- with .Values.service.selector }}
+  selector:
+    {{- toYaml . | default (include "generic-chart.selectorLabels" .) | nindent 4 }}
+  {{- end }}
+  {{ else }}
   selector:
     {{- include "generic-chart.selectorLabels" . | nindent 4 }}
+  {{- end }}
+{{- end -}}

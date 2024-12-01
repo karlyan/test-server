@@ -60,3 +60,34 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/* Build the list of port for service */}}
+{{- define "deployment.podPortsConfig" -}}
+{{- $ports := deepCopy .Values.deployment.ports }}
+{{- range $key, $port := $ports }}
+{{- if $port.enabled }}
+- name: {{ $key }}
+  protocol: {{ $port.protocol }}
+  containerPort: {{ $port.containerPort }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/* Build the list of port for service */}}
+{{- define "service.servicePortsConfig" -}}
+{{- $ports := deepCopy .Values.service.ports }}
+{{- range $key, $port := $ports }}
+{{- if $port.enabled }}
+- name: {{ $key }}
+  port: {{ $port.servicePort }}
+  targetPort: {{ $port.containerPort }}
+  protocol: {{ $port.protocol }}
+  {{- if $port.appProtocol }}
+  appProtocol: {{ $port.appProtocol }}
+  {{- end }}
+  {{- if $port.nodePort }}
+  nodePort: {{ $port.nodePort }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
