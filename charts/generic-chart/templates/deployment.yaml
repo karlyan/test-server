@@ -46,10 +46,14 @@ spec:
           ports:
             {{- $ports | nindent 10}}
           {{- end }}
+          {{- if .Values.deployment.livenessProbe.enabled }}
           livenessProbe:
             {{- toYaml .Values.deployment.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.deployment.readinessProbe.enabled }}
           readinessProbe:
             {{- toYaml .Values.deployment.readinessProbe | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
           {{- with .Values.deployment.volumeMounts }}

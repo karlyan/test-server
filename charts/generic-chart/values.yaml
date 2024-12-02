@@ -65,10 +65,12 @@ deployment:
 
   # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
+    enabled: true
     httpGet:
       path: /
       port: http
   readinessProbe:
+    enabled: true
     httpGet:
       path: /
       port: http
