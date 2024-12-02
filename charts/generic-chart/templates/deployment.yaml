@@ -48,11 +48,17 @@ spec:
           {{- end }}
           {{- if .Values.deployment.livenessProbe.enabled }}
           livenessProbe:
-            {{- toYaml .Values.deployment.livenessProbe | nindent 12 }}
+            {{- $filteredProbe := omit .Values.deployment.livenessProbe "enabled" }}
+            {{- toYaml $filteredProbe | nindent 12 }}
           {{- end }}
           {{- if .Values.deployment.readinessProbe.enabled }}
           readinessProbe:
-            {{- toYaml .Values.deployment.readinessProbe | nindent 12 }}
+            {{- $filteredProbe := omit .Values.deployment.readinessProbe "enabled" }}
+            {{- toYaml $filteredProbe | nindent 12 }}
+          {{- end }}
+          {{- with .Values.deployment.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}

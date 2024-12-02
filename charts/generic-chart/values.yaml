@@ -16,7 +16,11 @@ deployment:
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
+  # pod arguments
   args: []
+
+  # container environment variables
+  env: []
 
   # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: []
@@ -144,7 +148,18 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-
+pvc:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  spec:
+    resources:
+      requests:
+        storage: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: ""
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
