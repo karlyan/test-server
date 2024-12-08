@@ -5,6 +5,11 @@
 # deployment manifest see: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec
 deployment:
   enabled: false
+  name: ""
+  # Annotations to add
+  annotations: {}
+  # Labels to add
+  labels: {}
   # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
   replicaCount: 1
 
@@ -101,14 +106,63 @@ deployment:
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   # Specifies whether a service account should be created
-  create: false
-  # Automatically mount a ServiceAccount's API credentials?
-  automount: true
+  enabled: false
+  name: ""
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
+  labels: {}
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+
+# This section builds out the ClusterRoleBinding see: https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-binding-v1/
+clusterRoleBinding:
+  # Specifies whether this resource should be created
+  enabled: false
+  # If not set and create is true, a name is generated using the fullname template
   name: ""
+  # Annotations to add
+  annotations: {}
+  # Labels to add
+  labels: {}
+  roleRef:
+    name: ""
+
+# This section builds out the ClusterRoleBinding see: https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-binding-v1/
+clusterRole:
+  # Specifies whether this resource should be created
+  enabled: false
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Annotations to add
+  annotations: {}
+  # Labels to add
+  labels: {}
+  rules: {}
+
+# This section is for RoleBinding see: https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/role-binding-v1/
+roleBinding:
+  # Specifies whether this resource should be created
+  enabled: false
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Annotations to add
+  annotations: {}
+  # Labels to add
+  labels: {}
+
+# This section builds out the ClusterRoleBinding see: https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/role-v1/
+role:
+  # Specifies whether this resource should be created
+  enabled: false
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Annotations to add
+  annotations: {}
+  # Labels to add
+  labels: {}
+  rules: {}
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
@@ -134,20 +188,13 @@ service:
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: false
-  className: ""
+  name: ""
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  labels: {}
+  # for more info about spec: https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/#IngressSpec
+  spec: {}
 
+# This section is for PVC see: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
 pvc:
   enabled: false
   name: ""
@@ -161,12 +208,74 @@ pvc:
       - ReadWriteOnce
     storageClassName: ""
 
+# This section is for PV see: https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/
+pv:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  # spec api: https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeSpec
+  spec: {}
+
+# This section is for PV see: https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/storage-class-v1/
+storageClass:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  parameters: {}
+  provisioner: ""
+  allowVolumeExpansion: true
+  allowedTopologies: []
+  mountOptions: []
+  reclaimPolicy: false
+  volumeBindingMode: ""
+
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
   enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+# This section is for NetworkPolicy see: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+networkPolicy:
+  # Specifies whether a network policy should be created
+  enabled: false
+  # The name of the network policy to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Annotations to add to the network policy
+  annotations: {}
+  labels: {}
+  egress:
+    - {}
+  ingress:
+    - {}
 
+# section is for secret see: https://kubernetes.io/docs/concepts/configuration/secret/
+secret:
+  # Specifies whether this resource should be created
+  enabled: false
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Annotations to add
+  annotations: {}
+  # Labels to add
+  labels: {}
+  # types of secret see: https://kubernetes.io/docs/concepts/configuration/secret/#secret-types
+  type: Opaque
+  data: {}
+
+# This block is for setting up the ingress for more information can be found here: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Certificate
+certificate:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  # for more info about spec: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
+  spec: {}

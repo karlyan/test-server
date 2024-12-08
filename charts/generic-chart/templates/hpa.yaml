@@ -2,9 +2,18 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "generic-chart.fullname" . }}
+  name: {{ .Values.autoscaling.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  namespace: {{ .Release.Namespace }}
+  {{- if or .Values.autoscaling.annotations }}
+  {{- with .Values.autoscaling.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.autoscaling.labels }}
   labels:
-    {{- include "generic-chart.labels" . | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

@@ -1,0 +1,80 @@
+{{- if .Values.storageClass.enabled  -}}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storageClass.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  {{- if or .Values.storageClass.annotations }}
+  {{- with .Values.storageClass.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.storageClass.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- with.Values.storageClass.parameters }}
+parameters:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+provisioner: {{ .Values.storageClass.provisioner }}
+allowVolumeExpansion: {{ .Values.storageClass.allowVolumeExpansion }}
+{{- with.Values.storageClass.allowedTopologies }}
+allowedTopologies:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with.Values.storageClass.mountOptions }}
+mountOptions:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+reclaimPolicy: {{ .Values.storageClass.reclaimPolicy }}
+{{- if .Values.storageClass.volumeBindingMode }}
+volumeBindingMode: {{ .Values.storageClass.volumeBindingMode }}
+{{- end }}
+{{- end }}
+
+---
+{{- if .Values.pv.enabled  -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.pv.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  namespace: {{ .Release.Namespace }}
+  {{- if or .Values.pv.annotations }}
+  {{- with .Values.pv.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.pv.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- with.Values.pv.spec }}
+spec:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+
+---
+{{- if .Values.pvc.enabled  }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pvc.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  namespace: {{ .Release.Namespace }}
+  {{- if or .Values.pvc.annotations }}
+  {{- with .Values.pvc.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.pvc.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- with.Values.pvc.spec }}
+spec:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}

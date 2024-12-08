@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: {{ .Values.service.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
   namespace: {{ .Release.Namespace }}
-  {{- if or .Values.service.annotations .Values.additionalAnnotations }}
+  {{- if or .Values.service.annotations }}
   {{- with .Values.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

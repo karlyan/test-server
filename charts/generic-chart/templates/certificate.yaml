@@ -1,0 +1,21 @@
+{{- if .Values.certificate.enabled -}}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.certificate.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  namespace: {{ .Release.Namespace }}
+  {{- if or .Values.certificate.annotations }}
+  {{- with .Values.certificate.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.certificate.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- with.Values.certificate.spec }}
+spec:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}

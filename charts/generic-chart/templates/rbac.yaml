@@ -1,0 +1,115 @@
+{{- if .Values.serviceAccount.enabled -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.serviceAccount.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  namespace: {{ .Release.Namespace }}
+  {{- if or .Values.serviceAccount.annotations }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.serviceAccount.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
+{{- end }}
+
+---
+{{- if .Values.clusterRoleBinding.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Values.clusterRoleBinding.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  {{- if or .Values.clusterRoleBinding.annotations }}
+  {{- with .Values.clusterRoleBinding.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.clusterRoleBinding.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Values.clusterRoleBinding.roleRef.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.serviceAccount.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+
+---
+{{- if .Values.clusterRole.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.clusterRole.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  {{- if or .Values.clusterRole.annotations }}
+  {{- with .Values.clusterRole.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.clusterRole.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- with.Values.clusterRole.rules }}
+rules:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+
+---
+{{- if .Values.roleBinding.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.roleBinding.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  namespace: {{ .Release.Namespace }}
+  {{- if or .Values.roleBinding.annotations }}
+  {{- with .Values.roleBinding.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.roleBinding.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Values.roleBinding.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.serviceAccount.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+
+---
+{{- if .Values.role.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.role.name | default (printf "%s" (include "generic-chart.fullname" .)) | quote }}
+  {{- if or .Values.role.annotations }}
+  {{- with .Values.role.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.role.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- with.Values.role.rules }}
+rules:
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
