@@ -269,7 +269,10 @@ secret:
   labels: {}
   # types of secret see: https://kubernetes.io/docs/concepts/configuration/secret/#secret-types
   type: Opaque
+  # need to set with base64
   data: {}
+  # without base64
+  stringData: {}
 
 # This block is for setting up the ingress for more information can be found here: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Certificate
 certificate:
@@ -278,4 +281,13 @@ certificate:
   annotations: {}
   labels: {}
   # for more info about spec: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
+  spec: {}
+
+# This block is for setting up the ingress for more information can be found here: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.ClusterIssuer
+clusterIssuer:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  # for more info about spec: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.IssuerSpec
   spec: {}
