@@ -274,7 +274,7 @@ secret:
   # without base64
   stringData: {}
 
-# This block is for setting up the ingress for more information can be found here: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Certificate
+# This block is for setting up the certificate for more information can be found here: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Certificate
 certificate:
   enabled: false
   name: ""
@@ -283,11 +283,20 @@ certificate:
   # for more info about spec: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
   spec: {}
 
-# This block is for setting up the ingress for more information can be found here: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.ClusterIssuer
+# This block is for setting up the clusterIssuer for more information can be found here: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.ClusterIssuer
 clusterIssuer:
   enabled: false
   name: ""
   annotations: {}
   labels: {}
   # for more info about spec: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.IssuerSpec
+  spec: {}
+
+# This block is for setting up the generic service for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
+serviceGeneric:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  # for more info about spec: https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec
   spec: {}
