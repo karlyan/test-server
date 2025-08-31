@@ -18,7 +18,7 @@ RUN CMD_NAME=eksctl && \
 # kubectl
 ENV KUBECTL_VERSION=${KUBECTL_VERSION:-"v1.34.0"}
 RUN CMD_NAME=kubectl && \
-    curl -sLO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/${CMD_NAME} && \
+    curl -sLO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/${CMD_NAME} && \
     chmod +x ./${CMD_NAME} && mv -f ./${CMD_NAME} /usr/local/bin/${CMD_NAME}-${KUBECTL_VERSION} && \
     ln -sf /usr/local/bin/${CMD_NAME}-${KUBECTL_VERSION} /usr/local/bin/${CMD_NAME}
 

@@ -7,13 +7,15 @@ ARG TARGETOS TARGETARCH
 RUN apk add --no-cache --upgrade coreutils util-linux gettext bash curl wget jq yq openssl aws-cli
 
 # kubectl
+ARG KUBECTL_VERSION
 ENV KUBECTL_VERSION=${KUBECTL_VERSION:-"v1.34.0"}
 RUN CMD_NAME=kubectl && \
-    curl -sLO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/${CMD_NAME} && \
+    curl -sLO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/${CMD_NAME} && \
     chmod +x ./${CMD_NAME} && mv -f ./${CMD_NAME} /usr/local/bin/${CMD_NAME}-${KUBECTL_VERSION} && \
     ln -sf /usr/local/bin/${CMD_NAME}-${KUBECTL_VERSION} /usr/local/bin/${CMD_NAME}
 
 # helm 3
+ARG HELM_VERSION
 ENV HELM_VERSION=${HELM_VERSION:-"v3.18.6"}
 RUN CMD_NAME=helm && \
     curl --silent --location "https://get.helm.sh/${CMD_NAME}-${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz" | tar xz -C /tmp && \
