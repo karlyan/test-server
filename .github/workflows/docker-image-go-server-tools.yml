@@ -9,15 +9,16 @@ on:
         default: 'latest'
 
 jobs:
-  docker-go:
-    name: build and push go-server
+  docker-go-tools:
+    name: build and push go-server-tools
     runs-on: ubuntu-latest
     steps:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
     - name: Login to DockerHub
       uses: docker/login-action@v3
       with:
@@ -31,3 +32,5 @@ jobs:
         file: ./go-server-tools/Dockerfile
         push: true
         tags: karlyan/go-server-tools:${{ github.event.inputs.tagName }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
