@@ -85,7 +85,7 @@ The idea behind the generic chart is to avoid one chart per service. All workloa
 The chart unit tests use [helm-unittest](https://github.com/helm-unittest/helm-unittest):
 
 ```bash
-helm plugin install https://github.com/helm-unittest/helm-unittest --version v1.0.3
+helm plugin install --verify=false https://github.com/helm-unittest/helm-unittest --version v1.0.3
 ```
 
 ## CI / release flow

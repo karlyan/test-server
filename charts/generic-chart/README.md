@@ -58,7 +58,7 @@ ct lint --config ../../.github/linters/ct.yaml
 helm template charts/generic-chart -f some-values.yaml
 
 # Run unit tests
-helm plugin install https://github.com/helm-unittest/helm-unittest --version v1.0.3   # once
+helm plugin install --verify=false https://github.com/helm-unittest/helm-unittest --version v1.0.3   # once
 helm unittest --strict .
 ```
 
