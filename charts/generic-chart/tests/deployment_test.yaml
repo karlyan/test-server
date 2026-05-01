@@ -1,4 +1,5 @@
 suite: deployment
+# trivial PR to verify lint-test workflow on pull_request trigger
 templates:
   - deployment.yaml
 release:
