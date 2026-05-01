@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM alpine:3.22
+FROM --platform=$BUILDPLATFORM alpine:3.23
 
 # TARGETOS and TARGETARCH are set by the buildx build command
 ARG TARGETOS TARGETARCH
@@ -8,7 +8,7 @@ RUN apk add --no-cache --upgrade coreutils util-linux gettext bash curl wget jq 
 
 # kubectl
 ARG KUBECTL_VERSION
-ENV KUBECTL_VERSION=${KUBECTL_VERSION:-"v1.34.0"}
+ENV KUBECTL_VERSION=${KUBECTL_VERSION:-"v1.36.0"}
 RUN CMD_NAME=kubectl && \
     curl -sLO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/${CMD_NAME} && \
     chmod +x ./${CMD_NAME} && mv -f ./${CMD_NAME} /usr/local/bin/${CMD_NAME}-${KUBECTL_VERSION} && \
@@ -16,7 +16,7 @@ RUN CMD_NAME=kubectl && \
 
 # helm 3
 ARG HELM_VERSION
-ENV HELM_VERSION=${HELM_VERSION:-"v3.18.6"}
+ENV HELM_VERSION=${HELM_VERSION:-"v3.20.2"}
 RUN CMD_NAME=helm && \
     curl --silent --location "https://get.helm.sh/${CMD_NAME}-${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz" | tar xz -C /tmp && \
     chmod +x /tmp/${TARGETOS}-${TARGETARCH}/${CMD_NAME} && mv -f /tmp/${TARGETOS}-${TARGETARCH}/${CMD_NAME} /usr/local/bin/${CMD_NAME}-${HELM_VERSION} && \

@@ -1,5 +1,5 @@
 # create a ubuntu container with jammy release
-FROM ubuntu:jammy
+FROM ubuntu:resolute
 
 # install basic tools and remove cache
 RUN apt-get update && apt-get install -y \

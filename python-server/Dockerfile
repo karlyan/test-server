@@ -1,4 +1,4 @@
-FROM --platform=${BUILDPLATFORM} python:3.13-slim-bookworm
+FROM --platform=${BUILDPLATFORM} python:3.14-slim-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=Etc/UTC \
