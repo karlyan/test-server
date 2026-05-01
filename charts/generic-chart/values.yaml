@@ -197,6 +197,24 @@ ingress:
   # for more info about spec: https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/#IngressSpec
   spec: {}
 
+# Gateway (Gateway API): https://gateway-api.sigs.k8s.io/api-types/gateway/
+gateway:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  # spec api: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.GatewaySpec
+  spec: {}
+
+# HTTPRoute (Gateway API): https://gateway-api.sigs.k8s.io/api-types/httproute/
+httpRoute:
+  enabled: false
+  name: ""
+  annotations: {}
+  labels: {}
+  # spec api: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRouteSpec
+  spec: {}
+
 # This section is for PVC see: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
 pvc:
   enabled: false

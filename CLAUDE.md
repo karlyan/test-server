@@ -60,7 +60,7 @@ helm template charts/generic-chart -f some-values.yaml
 
 `charts/generic-chart` 是这个仓库的核心架构决策：**不为每个服务写一个 chart，而是用一个变量驱动的通用 chart**，所有差异通过 values 注入（在 CD 系统 / 各环境的 git repo 里维护）。
 
-- 顶层每个能力（`deployment`, `service`, `ingress`, `hpa`, `cert-manager`, `networkpolicy`, `rbac`, `secret`, `storage`）都有 `enabled` 开关，默认全 `false`，按需启用。
+- 顶层每个能力（`deployment`, `service`, `ingress`, `gateway` / `httpRoute`, `hpa`, `cert-manager`, `networkpolicy`, `rbac`, `secret`, `storage`）都有 `enabled` 开关，默认全 `false`，按需启用。
 - `deployment.ports` 是一个命名 map（`http`, `https`...），`livenessProbe` / `readinessProbe` 通过 `port: http` 这样的名字引用——新增端口时要保持名字一致，否则探针会指空。
 - README 里的 helm 命令展示了典型用法：`--reuse-values` + 通过 stdin 传入服务特定的 values。
 
