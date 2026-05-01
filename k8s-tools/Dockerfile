@@ -14,9 +14,9 @@ RUN CMD_NAME=kubectl && \
     chmod +x ./${CMD_NAME} && mv -f ./${CMD_NAME} /usr/local/bin/${CMD_NAME}-${KUBECTL_VERSION} && \
     ln -sf /usr/local/bin/${CMD_NAME}-${KUBECTL_VERSION} /usr/local/bin/${CMD_NAME}
 
-# helm 3
+# helm
 ARG HELM_VERSION
-ENV HELM_VERSION=${HELM_VERSION:-"v3.20.2"}
+ENV HELM_VERSION=${HELM_VERSION:-"v4.1.4"}
 RUN CMD_NAME=helm && \
     curl --silent --location "https://get.helm.sh/${CMD_NAME}-${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz" | tar xz -C /tmp && \
     chmod +x /tmp/${TARGETOS}-${TARGETARCH}/${CMD_NAME} && mv -f /tmp/${TARGETOS}-${TARGETARCH}/${CMD_NAME} /usr/local/bin/${CMD_NAME}-${HELM_VERSION} && \
