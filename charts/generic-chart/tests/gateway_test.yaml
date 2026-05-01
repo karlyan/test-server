@@ -1,0 +1,133 @@
+suite: gateway
+templates:
+  - gateway.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: should not render when both maps are empty
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: per-key enabled false skips that resource
+    set:
+      gateways:
+        on:
+          enabled: true
+          spec:
+            gatewayClassName: istio
+            listeners:
+              - name: http
+                port: 80
+                protocol: HTTP
+        off:
+          enabled: false
+          spec: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Gateway
+
+  - it: gateway name defaults to fullname-key
+    set:
+      gateways:
+        shared:
+          enabled: true
+          spec:
+            gatewayClassName: istio
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart-shared
+      - equal:
+          path: apiVersion
+          value: gateway.networking.k8s.io/v1
+      - equal:
+          path: spec.gatewayClassName
+          value: istio
+
+  - it: gateway name override wins
+    set:
+      gateways:
+        shared:
+          enabled: true
+          name: custom-gw
+          spec:
+            gatewayClassName: istio
+    asserts:
+      - equal:
+          path: metadata.name
+          value: custom-gw
+
+  - it: httpRoute renders with multiple instances
+    set:
+      httpRoutes:
+        ui:
+          enabled: true
+          spec:
+            parentRefs:
+              - name: shared
+            hostnames: [ui.example.com]
+            rules:
+              - backendRefs:
+                  - name: ui-svc
+                    port: 80
+        api:
+          enabled: true
+          spec:
+            parentRefs:
+              - name: shared
+            hostnames: [api.example.com]
+            rules:
+              - backendRefs:
+                  - name: api-svc
+                    port: 8080
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: httpRoute name defaults to fullname-key
+    set:
+      httpRoutes:
+        ui:
+          enabled: true
+          spec:
+            hostnames: [ui.example.com]
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart-ui
+      - isKind:
+          of: HTTPRoute
+
+  - it: gateway annotations passthrough per key
+    set:
+      gateways:
+        shared:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+          spec:
+            gatewayClassName: istio
+    asserts:
+      - equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt
+
+  - it: gateway and httpRoute can coexist
+    set:
+      gateways:
+        shared:
+          enabled: true
+          spec:
+            gatewayClassName: istio
+      httpRoutes:
+        ui:
+          enabled: true
+          spec:
+            hostnames: [ui.example.com]
+    asserts:
+      - hasDocuments:
+          count: 2

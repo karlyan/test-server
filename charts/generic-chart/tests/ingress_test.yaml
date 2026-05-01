@@ -1,0 +1,66 @@
+suite: ingress
+templates:
+  - ingress.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: should not render when disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders Ingress with fullname and raw spec passthrough
+    set:
+      ingress.enabled: true
+      ingress.spec:
+        ingressClassName: nginx
+        rules:
+          - host: example.com
+            http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: foo
+                      port:
+                        number: 80
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: spec.ingressClassName
+          value: nginx
+      - equal:
+          path: spec.rules[0].host
+          value: example.com
+
+  - it: name override
+    set:
+      ingress.enabled: true
+      ingress.name: my-ing
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-ing
+
+  - it: annotations and labels passthrough
+    set:
+      ingress.enabled: true
+      ingress.annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+      ingress.labels:
+        env: prod
+    asserts:
+      - equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/rewrite-target"]
+          value: /
+      - equal:
+          path: metadata.labels.env
+          value: prod

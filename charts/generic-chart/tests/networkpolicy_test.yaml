@@ -1,0 +1,61 @@
+suite: networkpolicy
+templates:
+  - networkpolicy.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: should not render when disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders NetworkPolicy with podSelector defaulting to selectorLabels
+    set:
+      networkPolicy.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: spec.podSelector.matchLabels["app.kubernetes.io/name"]
+          value: generic-chart
+      - equal:
+          path: spec.policyTypes[0]
+          value: Egress
+      - equal:
+          path: spec.policyTypes[1]
+          value: Ingress
+
+  - it: ingress and egress rules passthrough
+    set:
+      networkPolicy.enabled: true
+      networkPolicy.ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  role: client
+      networkPolicy.egress:
+        - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+    asserts:
+      - equal:
+          path: spec.ingress[0].from[0].podSelector.matchLabels.role
+          value: client
+      - equal:
+          path: spec.egress[0].to[0].ipBlock.cidr
+          value: 10.0.0.0/8
+
+  - it: name override
+    set:
+      networkPolicy.enabled: true
+      networkPolicy.name: my-np
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-np

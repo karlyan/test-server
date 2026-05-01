@@ -1,0 +1,123 @@
+suite: rbac
+templates:
+  - rbac.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: nothing renders when all RBAC resources disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: ServiceAccount renders with fullname and automount default true
+    set:
+      serviceAccount.enabled: true
+    documentSelector:
+      path: kind
+      value: ServiceAccount
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: automountServiceAccountToken
+          value: true
+
+  - it: ServiceAccount automount can be disabled
+    set:
+      serviceAccount.enabled: true
+      serviceAccount.automount: false
+    documentSelector:
+      path: kind
+      value: ServiceAccount
+    asserts:
+      - equal:
+          path: automountServiceAccountToken
+          value: false
+
+  - it: ClusterRoleBinding subjects reference serviceAccount and roleRef.name
+    set:
+      serviceAccount.enabled: true
+      serviceAccount.name: auto-sa
+      clusterRoleBinding.enabled: true
+      clusterRoleBinding.roleRef.name: cluster-admin
+    documentSelector:
+      path: kind
+      value: ClusterRoleBinding
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: roleRef.name
+          value: cluster-admin
+      - equal:
+          path: roleRef.kind
+          value: ClusterRole
+      - equal:
+          path: subjects[0].name
+          value: auto-sa
+      - equal:
+          path: subjects[0].namespace
+          value: my-ns
+
+  - it: ClusterRoleBinding roleRef falls back to fullname when blank
+    set:
+      clusterRoleBinding.enabled: true
+    documentSelector:
+      path: kind
+      value: ClusterRoleBinding
+    asserts:
+      - equal:
+          path: roleRef.name
+          value: my-release-generic-chart
+
+  - it: ClusterRole renders with rules passthrough
+    set:
+      clusterRole.enabled: true
+      clusterRole.rules:
+        - apiGroups: [""]
+          resources: [pods]
+          verbs: [get, list]
+    documentSelector:
+      path: kind
+      value: ClusterRole
+    asserts:
+      - equal:
+          path: rules[0].apiGroups[0]
+          value: ""
+      - equal:
+          path: rules[0].verbs[1]
+          value: list
+
+  - it: RoleBinding renders namespaced and binds the serviceAccount
+    set:
+      serviceAccount.enabled: true
+      serviceAccount.name: auto-sa
+      roleBinding.enabled: true
+    documentSelector:
+      path: kind
+      value: RoleBinding
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: my-ns
+      - equal:
+          path: subjects[0].name
+          value: auto-sa
+
+  - it: Role rules passthrough
+    set:
+      role.enabled: true
+      role.rules:
+        - apiGroups: [apps]
+          resources: [deployments]
+          verbs: [get]
+    documentSelector:
+      path: kind
+      value: Role
+    asserts:
+      - equal:
+          path: rules[0].resources[0]
+          value: deployments

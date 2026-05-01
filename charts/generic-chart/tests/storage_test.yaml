@@ -1,0 +1,92 @@
+suite: storage
+templates:
+  - storage.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: nothing renders when all storage resources disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: StorageClass renders with provisioner and parameters
+    set:
+      storageClass.enabled: true
+      storageClass.provisioner: kubernetes.io/aws-ebs
+      storageClass.parameters:
+        type: gp3
+      storageClass.volumeBindingMode: WaitForFirstConsumer
+    documentSelector:
+      path: kind
+      value: StorageClass
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: provisioner
+          value: kubernetes.io/aws-ebs
+      - equal:
+          path: parameters.type
+          value: gp3
+      - equal:
+          path: volumeBindingMode
+          value: WaitForFirstConsumer
+      - equal:
+          path: allowVolumeExpansion
+          value: true
+
+  - it: PersistentVolume renders with raw spec
+    set:
+      pv.enabled: true
+      pv.spec:
+        capacity:
+          storage: 10Gi
+        accessModes: [ReadWriteOnce]
+        hostPath:
+          path: /data
+    documentSelector:
+      path: kind
+      value: PersistentVolume
+    asserts:
+      - equal:
+          path: spec.capacity.storage
+          value: 10Gi
+      - equal:
+          path: spec.hostPath.path
+          value: /data
+
+  - it: PersistentVolumeClaim renders with default 1Gi
+    set:
+      pvc.enabled: true
+    documentSelector:
+      path: kind
+      value: PersistentVolumeClaim
+    asserts:
+      - equal:
+          path: spec.resources.requests.storage
+          value: 1Gi
+      - equal:
+          path: spec.accessModes[0]
+          value: ReadWriteOnce
+
+  - it: PersistentVolumeClaim spec override
+    set:
+      pvc.enabled: true
+      pvc.spec:
+        resources:
+          requests:
+            storage: 50Gi
+        accessModes: [ReadWriteMany]
+        storageClassName: efs
+    documentSelector:
+      path: kind
+      value: PersistentVolumeClaim
+    asserts:
+      - equal:
+          path: spec.resources.requests.storage
+          value: 50Gi
+      - equal:
+          path: spec.storageClassName
+          value: efs

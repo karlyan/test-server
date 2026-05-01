@@ -1,0 +1,62 @@
+suite: cert-manager
+templates:
+  - cert-manager.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: nothing renders when both disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: ClusterIssuer renders with raw spec
+    set:
+      clusterIssuer.enabled: true
+      clusterIssuer.spec:
+        acme:
+          server: https://acme-v02.api.letsencrypt.org/directory
+    documentSelector:
+      path: kind
+      value: ClusterIssuer
+    asserts:
+      - equal:
+          path: apiVersion
+          value: cert-manager.io/v1
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: spec.acme.server
+          value: https://acme-v02.api.letsencrypt.org/directory
+
+  - it: Certificate renders with raw spec
+    set:
+      certificate.enabled: true
+      certificate.spec:
+        secretName: my-tls
+        dnsNames:
+          - example.com
+    documentSelector:
+      path: kind
+      value: Certificate
+    asserts:
+      - equal:
+          path: apiVersion
+          value: cert-manager.io/v1
+      - equal:
+          path: spec.secretName
+          value: my-tls
+      - equal:
+          path: spec.dnsNames[0]
+          value: example.com
+
+  - it: name overrides
+    set:
+      certificate.enabled: true
+      certificate.name: my-cert
+      clusterIssuer.enabled: true
+      clusterIssuer.name: my-issuer
+    asserts:
+      - hasDocuments:
+          count: 2

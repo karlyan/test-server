@@ -44,15 +44,20 @@ uv run -m app                      # 本地启动，监听 :4999
 # 本地 lint（CI 跑的也是这个）
 ct lint --config .github/linters/ct.yaml
 
+# 单元测试（helm-unittest 插件，需 helm plugin install 一次）
+helm unittest --strict charts/generic-chart
+
 # 模板渲染检查
 helm template charts/generic-chart -f some-values.yaml
 ```
+
+测试文件在 `charts/generic-chart/tests/<resource>_test.yaml`，每个模板一个 suite。新增模板必须配套加 suite——CI 会跑 `helm unittest`。
 
 ## CI / 发布流程
 
 - `.github/workflows/docker-image-*.yml` 都是 **`workflow_dispatch` 手动触发**，输入 `tagName` 决定镜像 tag（默认 `latest`），多架构（amd64+arm64）推送到 Docker Hub `karlyan/<name>`。改 Dockerfile 不会自动出新镜像，需要手动跑 workflow。
 - `.github/workflows/release-chart.yaml` — 当 `charts/**` 在 `main` 分支有变更时，用 `helm/chart-releaser-action` 自动打包并发布到 GitHub Pages 的 chart repo（指向就是 README 里的 `https://github.yyzd.me`）。**修改 chart 时记得同步 bump `charts/generic-chart/Chart.yaml` 里的 `version`，否则 chart-releaser 会因为 `skip_existing: true` 跳过。**
-- `.github/workflows/lint-test.yaml` — PR 触发 `ct lint`。
+- `.github/workflows/lint-test.yaml` — PR 触发 `ct lint` + `helm unittest`（强制，所有 chart 模板都有对应 suite）。
 
 ## 架构要点
 

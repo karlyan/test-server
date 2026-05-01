@@ -1,0 +1,119 @@
+suite: service
+templates:
+  - service.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: should not render when both service and serviceGeneric disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: service renders ClusterIP with default port and selector
+    set:
+      service.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: spec.type
+          value: ClusterIP
+      - contains:
+          path: spec.ports
+          content:
+            name: http
+            port: 443
+            targetPort: 443
+            protocol: TCP
+      - equal:
+          path: spec.selector["app.kubernetes.io/name"]
+          value: generic-chart
+
+  - it: service ports rendered from map by name and skips disabled
+    set:
+      service.enabled: true
+      service.ports:
+        http:
+          enabled: true
+          protocol: TCP
+          containerPort: 80
+          servicePort: 80
+        admin:
+          enabled: true
+          protocol: TCP
+          containerPort: 9090
+          servicePort: 9090
+          nodePort: 30090
+          appProtocol: tcp
+        offline:
+          enabled: false
+          protocol: TCP
+          containerPort: 1234
+          servicePort: 1234
+    asserts:
+      - lengthEqual:
+          path: spec.ports
+          count: 2
+      - contains:
+          path: spec.ports
+          content:
+            name: admin
+            port: 9090
+            targetPort: 9090
+            protocol: TCP
+            nodePort: 30090
+            appProtocol: tcp
+
+  - it: service type override
+    set:
+      service.enabled: true
+      service.type: LoadBalancer
+    asserts:
+      - equal:
+          path: spec.type
+          value: LoadBalancer
+
+  - it: service name override
+    set:
+      service.enabled: true
+      service.name: my-svc
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-svc
+
+  - it: serviceGeneric renders second Service from raw spec
+    set:
+      service.enabled: false
+      serviceGeneric.enabled: true
+      serviceGeneric.spec:
+        type: ExternalName
+        externalName: example.com
+    documentSelector:
+      path: kind
+      value: Service
+    asserts:
+      - equal:
+          path: spec.type
+          value: ExternalName
+      - equal:
+          path: spec.externalName
+          value: example.com
+
+  - it: both service and serviceGeneric render two documents
+    set:
+      service.enabled: true
+      serviceGeneric.enabled: true
+      serviceGeneric.spec:
+        type: ClusterIP
+        ports:
+          - port: 1
+    asserts:
+      - hasDocuments:
+          count: 2

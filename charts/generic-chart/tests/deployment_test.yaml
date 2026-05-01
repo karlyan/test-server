@@ -1,0 +1,182 @@
+suite: deployment
+templates:
+  - deployment.yaml
+release:
+  name: my-release
+  namespace: my-ns
+tests:
+  - it: should not render when disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render Deployment with default name and image
+    set:
+      deployment.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.name
+          value: my-release-generic-chart
+      - equal:
+          path: metadata.namespace
+          value: my-ns
+      - equal:
+          path: spec.replicas
+          value: 1
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: nginx:1.16.0
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+
+  - it: name override wins over fullname
+    set:
+      deployment.enabled: true
+      deployment.name: my-app
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-app
+
+  - it: annotations and labels passthrough
+    set:
+      deployment.enabled: true
+      deployment.annotations:
+        foo: bar
+      deployment.labels:
+        env: prod
+    asserts:
+      - equal:
+          path: metadata.annotations.foo
+          value: bar
+      - equal:
+          path: metadata.labels.env
+          value: prod
+
+  - it: replicaCount honored
+    set:
+      deployment.enabled: true
+      deployment.replicaCount: 5
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 5
+
+  - it: replicas omitted when autoscaling enabled
+    set:
+      deployment.enabled: true
+      autoscaling.enabled: true
+    asserts:
+      - notExists:
+          path: spec.replicas
+
+  - it: ports rendered from map by name and skips disabled
+    set:
+      deployment.enabled: true
+      deployment.ports:
+        http:
+          enabled: true
+          protocol: TCP
+          containerPort: 8080
+        admin:
+          enabled: true
+          protocol: TCP
+          containerPort: 9090
+        offline:
+          enabled: false
+          protocol: TCP
+          containerPort: 1234
+    asserts:
+      - lengthEqual:
+          path: spec.template.spec.containers[0].ports
+          count: 2
+      - contains:
+          path: spec.template.spec.containers[0].ports
+          content:
+            name: http
+            protocol: TCP
+            containerPort: 8080
+      - contains:
+          path: spec.template.spec.containers[0].ports
+          content:
+            name: admin
+            protocol: TCP
+            containerPort: 9090
+
+  - it: liveness and readiness probes can be disabled independently
+    set:
+      deployment.enabled: true
+      deployment.livenessProbe.enabled: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].livenessProbe
+      - exists:
+          path: spec.template.spec.containers[0].readinessProbe
+
+  - it: image tag falls back to chart appVersion when blank
+    set:
+      deployment.enabled: true
+      deployment.image.tag: ""
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: nginx:1.16.0
+
+  - it: serviceAccountName is default when serviceAccount disabled
+    set:
+      deployment.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: default
+
+  - it: serviceAccountName falls back to fullname when serviceAccount enabled with blank name
+    set:
+      deployment.enabled: true
+      serviceAccount.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: my-release-generic-chart
+
+  - it: serviceAccount custom name wins
+    set:
+      deployment.enabled: true
+      serviceAccount.enabled: true
+      serviceAccount.name: my-sa
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: my-sa
+
+  - it: env list passthrough
+    set:
+      deployment.enabled: true
+      deployment.env:
+        - name: FOO
+          value: bar
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FOO
+            value: bar
+
+  - it: others block injected at pod spec level
+    set:
+      deployment.enabled: true
+      deployment.others:
+        dnsPolicy: ClusterFirstWithHostNet
+        hostNetwork: true
+    asserts:
+      - equal:
+          path: spec.template.spec.dnsPolicy
+          value: ClusterFirstWithHostNet
+      - equal:
+          path: spec.template.spec.hostNetwork
+          value: true
