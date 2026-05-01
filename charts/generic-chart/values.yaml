@@ -198,22 +198,28 @@ ingress:
   spec: {}
 
 # Gateway (Gateway API): https://gateway-api.sigs.k8s.io/api-types/gateway/
-gateway:
-  enabled: false
-  name: ""
-  annotations: {}
-  labels: {}
-  # spec api: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.GatewaySpec
-  spec: {}
+# Map of named Gateway resources. Each enabled key creates one Gateway named
+# {fullname}-{key} (override via .name).
+gateways: {}
+#  default:
+#    enabled: false
+#    name: ""
+#    annotations: {}
+#    labels: {}
+#    # spec api: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.GatewaySpec
+#    spec: {}
 
 # HTTPRoute (Gateway API): https://gateway-api.sigs.k8s.io/api-types/httproute/
-httpRoute:
-  enabled: false
-  name: ""
-  annotations: {}
-  labels: {}
-  # spec api: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRouteSpec
-  spec: {}
+# Map of named HTTPRoute resources. Each enabled key creates one HTTPRoute named
+# {fullname}-{key} (override via .name).
+httpRoutes: {}
+#  default:
+#    enabled: false
+#    name: ""
+#    annotations: {}
+#    labels: {}
+#    # spec api: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRouteSpec
+#    spec: {}
 
 # This section is for PVC see: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
 pvc:
