@@ -1,13 +1,21 @@
 name: Lint and Test Charts
 
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/**'
+      - '.github/workflows/lint-test.yaml'
+      - '.github/linters/ct.yaml'
 
 jobs:
   lint-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
