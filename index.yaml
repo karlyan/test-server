@@ -3,6 +3,16 @@ entries:
   generic-chart:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2026-10-05T22:27:43.30415655Z"
+    description: A Helm chart for Kubernetes
+    digest: c05920633d6431d005843b65dbb62ce30fe67f0613ec49de1aed38107a2bfd16
+    name: generic-chart
+    type: application
+    urls:
+    - https://github.com/karlyan/test-server/releases/download/generic-chart-1.7.0/generic-chart-1.7.0.tgz
+    version: 1.7.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2026-05-01T19:59:56.96381201Z"
     description: A Helm chart for Kubernetes
     digest: e83965f170d4bbbe15f51b4edf292792436024de4bc3ea18654956492a1c3712
@@ -111,4 +121,4 @@ entries:
     urls:
     - https://github.com/karlyan/test-server/releases/download/generic-chart-0.1.0/generic-chart-0.1.0.tgz
     version: 0.1.0
-generated: "2026-05-01T19:59:56.963919139Z"
+generated: "2026-10-05T22:27:43.304185243Z"
