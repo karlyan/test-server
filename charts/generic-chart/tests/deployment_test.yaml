@@ -67,6 +67,24 @@ tests:
           path: spec.replicas
           value: 5
 
+  - it: strategy omitted by default (Kubernetes RollingUpdate)
+    set:
+      deployment.enabled: true
+    asserts:
+      - notExists:
+          path: spec.strategy
+
+  - it: strategy passthrough (Recreate for a database on a RWO volume)
+    set:
+      deployment.enabled: true
+      deployment.strategy:
+        type: Recreate
+    asserts:
+      - equal:
+          path: spec.strategy
+          value:
+            type: Recreate
+
   - it: replicas omitted when autoscaling enabled
     set:
       deployment.enabled: true
