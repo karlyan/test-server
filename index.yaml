@@ -1,17 +1,5 @@
 apiVersion: v1
 entries:
-  agentgateway-standalone:
-  - apiVersion: v2
-    appVersion: 1.6.0
-    created: "2026-10-08T00:05:48.039437-05:00"
-    description: A Helm chart for standalone Agentgateway
-    digest: 1f0abeeeb745d2f72134108b0079e555a1ce22eb38110bcc7e3d8312f2f40efe
-    icon: https://raw.githubusercontent.com/agentgateway/website/refs/heads/main/static/favicon.svg
-    name: agentgateway-standalone
-    type: application
-    urls:
-    - https://github.com/karlyan/test-server/releases/download/agentgateway-standalone-1.6.0/agentgateway-standalone-1.6.0.tgz
-    version: 1.6.0
   generic-chart:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -133,27 +121,4 @@ entries:
     urls:
     - https://github.com/karlyan/test-server/releases/download/generic-chart-0.1.0/generic-chart-0.1.0.tgz
     version: 0.1.0
-  litellm-helm:
-  - annotations:
-      org.opencontainers.image.source: https://github.com/BerriAI/litellm
-      org.opencontainers.image.url: https://docs.litellm.ai/
-    apiVersion: v2
-    appVersion: 1.104.1
-    created: "2026-10-08T00:05:47.998793-05:00"
-    dependencies:
-    - condition: db.deployStandalone
-      name: postgresql
-      repository: oci://registry-1.docker.io/bitnamicharts
-      version: 14.3.1
-    - condition: redis.enabled
-      name: redis
-      repository: oci://registry-1.docker.io/bitnamicharts
-      version: 18.19.1
-    description: Call all LLM APIs using the OpenAI format
-    digest: 142d57c0f0e8729a4b2bf225d4b13c893e125489d4fabbc6c445b12630fbfdf1
-    name: litellm-helm
-    type: application
-    urls:
-    - https://github.com/karlyan/test-server/releases/download/litellm-helm-1.104.1/litellm-helm-1.104.1.tgz
-    version: 1.104.1
-generated: "2026-10-08T00:05:48.038815-05:00"
+generated: "2026-10-05T22:27:43.304185243Z"
